@@ -8,7 +8,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import entity.CommuteInfo;
-import repository.Query;
+import query.Query;
 import repository.UserRepository;
 
 /**
@@ -37,15 +37,19 @@ public class Commute {
                 option = sc.nextInt();
 
                 switch (option) {
+                    // 출근
                     case 1:
                         workIn(id);
                         break;
+                    // 퇴근
                     case 2:
                         workOut(id);
                         break;
+                    // 조회
                     case 3:
                         readCommuteList(id);
                         break;
+                    // 로그아웃
                     case 4:
                         System.out.println();
                         System.out.println("로그아웃합니다.");
@@ -70,7 +74,7 @@ public class Commute {
      * @author zeonghun
      * @since 2023.03.29
      */
-    public static void printOption() {
+    public void printOption() {
         System.out.println();
         System.out.println("1. 출근");
         System.out.println("2. 퇴근");
@@ -88,7 +92,7 @@ public class Commute {
      * @author zeonghun
      * @since 2023.03.29
      */
-    public static void workIn(String id) {
+    public void workIn(String id) {
         CommuteInfo commute = new CommuteInfo();
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
@@ -99,11 +103,10 @@ public class Commute {
         }
 
         try (
-                Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID,
-                        UserRepository.DB_USER_PASSWORD);
-                PreparedStatement stmt = con.prepareStatement(Query.ON_TIME_INSERT);) {
+            Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
+            PreparedStatement stmt = con.prepareStatement(Query.ON_TIME_INSERT);) {
             // parameter 설정
-            stmt.setInt(1, commute.getCno());
+            stmt.setInt(1, commute.getCommuteIndex());
             stmt.setString(2, id);
             commute.setOnTime(currentTimestamp);
             stmt.setTimestamp(3, commute.getOnTime());
@@ -123,7 +126,7 @@ public class Commute {
      * @author zeonghun
      * @since 2023.03.29
      */
-    public static void workOut(String id) {
+    public void workOut(String id) {
         CommuteInfo commute = new CommuteInfo();
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
@@ -134,14 +137,12 @@ public class Commute {
         }
 
         try (
-                Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID,
-                        UserRepository.DB_USER_PASSWORD);
-                PreparedStatement stmt = con.prepareStatement(Query.OFF_TIME_INSERT);) {
+            Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
+            PreparedStatement stmt = con.prepareStatement(Query.OFF_TIME_INSERT);) {
             // parameter 설정
-            stmt.setInt(1, commute.getCno());
+            commute.setOffTime(currentTimestamp);
+            stmt.setTimestamp(1, commute.getOffTime());
             stmt.setString(2, id);
-            commute.setOnTime(currentTimestamp);
-            stmt.setTimestamp(3, commute.getOffTime());
             stmt.executeUpdate();
             System.out.println();
             System.out.println("퇴근 완료했습니다.");
@@ -158,54 +159,46 @@ public class Commute {
      * @author zeonghun
      * @since 2023.03.29
      */
-    public static void readCommuteList(String id) {
+    public void readCommuteList(String id) {
         try {
             Class.forName(UserRepository.DB_DRIVE_PATH);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-        // if (id == "admin") {
-
-        //     try (
-        //             Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID,
-        //                     UserRepository.DB_USER_PASSWORD);
-        //             PreparedStatement stmt = con.prepareStatement(Query.COMMUTE_READ_ALL);) {
-        //         // stmt.setString(1, id);
-        //         ResultSet rs = stmt.executeQuery();
-        //         System.out.println();
-        //         System.out.println(
-        //                 "========================================== Commute List ==========================================");
-        //         while (rs.next()) {
-        //             System.out.println("아이디: " + rs.getString("id") + " / 이름: " + rs.getString("name") + " / 출근: "
-        //                     + rs.getString("on_time") + " / 퇴근: " + rs.getString("off_time"));
-        //         }
-        //         System.out.println(
-        //                 "==================================================================================================");
-        //     } catch (SQLException e) {
-        //         e.printStackTrace();
-        //     }
-
-        // } else {
-
+        // 관리자일 경우
+        if (id.equals("admin")) {
             try (
-                    Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID,
-                            UserRepository.DB_USER_PASSWORD);
-                    PreparedStatement stmt = con.prepareStatement(Query.COMMUTE_READ);) {
-                stmt.setString(1, id);
+                Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
+                PreparedStatement stmt = con.prepareStatement(Query.COMMUTE_READ_ALL);) {
+                // stmt.setString(1, id);
                 ResultSet rs = stmt.executeQuery();
+
                 System.out.println();
-                System.out.println(
-                        "========================================== Commute List ==========================================");
+                System.out.println("========================================== Commute List ==========================================");
                 while (rs.next()) {
-                    System.out.println("아이디: " + rs.getString("id") + " / 이름: " + rs.getString("name") + " / 출근: "
-                            + rs.getString("on_time") + " / 퇴근: " + rs.getString("off_time"));
+                    System.out.println("아이디: " + rs.getString("id") + " / 이름: " + rs.getString("name") + " / 출근: " + rs.getString("on_time") + " / 퇴근: " + rs.getString("off_time"));
                 }
-                System.out.println(
-                        "==================================================================================================");
+                System.out.println("==================================================================================================");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        // }
+        // 관리자가 아닐 경우
+        } else {
+            try (
+                Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
+                PreparedStatement stmt = con.prepareStatement(Query.COMMUTE_READ);) {
+                stmt.setString(1, id);
+                ResultSet rs = stmt.executeQuery();
+
+                System.out.println();
+                System.out.println("========================================== Commute List ==========================================");
+                while (rs.next()) {
+                    System.out.println("아이디: " + rs.getString("id") + " / 이름: " + rs.getString("name") + " / 출근: " + rs.getString("on_time") + " / 퇴근: " + rs.getString("off_time"));
+                }
+                System.out.println("==================================================================================================");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

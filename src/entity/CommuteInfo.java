@@ -6,19 +6,19 @@ import java.sql.Timestamp;
  * 출퇴근 정보 저장 클래스
  * 
  * @author zeonghun
- * @since 2023.03.28
+ * @since 2023.03.29
  */
 public class CommuteInfo {
-    private int cno;
+    private int commuteIndex;
     private Timestamp onTime;
     private Timestamp offTime;
 
-    public int getCno() {
-        return this.cno;
+    public int getCommuteIndex() {
+        return this.commuteIndex;
     }
 
-    public void setCno(int cno) {
-        this.cno = cno;
+    public void setCommuteIndex(int commuteIndex) {
+        this.commuteIndex = commuteIndex;
     }
 
     public Timestamp getOnTime() {

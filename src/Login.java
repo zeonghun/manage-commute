@@ -5,8 +5,7 @@ import java.sql.ResultSet;
 import java.util.Scanner;
 
 import entity.Member;
-import repository.Query;
-import repository.SHA256;
+import query.Query;
 import repository.UserRepository;
 
 public class Login {
@@ -14,14 +13,13 @@ public class Login {
      * 로그인
      * 
      * @author zeonghun
-     * @since 2023.03.28
+     * @since 2023.03.29
      */
     public void login() {
         Scanner sc = new Scanner(System.in);
         Member member = new Member();
         ResultSet rs = null;
         Commute commute = new Commute();
-        SHA256 sha256 = new SHA256();
 
         System.out.println();
         System.out.print("아이디: ");
@@ -41,13 +39,13 @@ public class Login {
             PreparedStatement stmt = con.prepareStatement(Query.MEMBER_SELECT);) {
             // parameter 설정
             stmt.setString(1, member.getId());
-            stmt.setString(2, sha256.encrypt(member.getPassword()));
+            stmt.setString(2, SHA256.encrypt(member.getPassword()));
             rs = stmt.executeQuery();
 
             // 행 개수 세기
             rs.last();
             int rowCount = rs.getRow();
-            rs.beforeFirst();
+            //rs.beforeFirst();
 
             if (rowCount == 1) {
                 System.out.println();
