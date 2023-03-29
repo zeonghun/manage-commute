@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import entity.Member;
 import repository.Query;
+import repository.SHA256;
 import repository.UserRepository;
 
 public class Login {
@@ -19,6 +20,8 @@ public class Login {
         Scanner sc = new Scanner(System.in);
         Member member = new Member();
         ResultSet rs = null;
+        Commute commute = new Commute();
+        SHA256 sha256 = new SHA256();
 
         System.out.println();
         System.out.print("아이디: ");
@@ -38,7 +41,7 @@ public class Login {
             PreparedStatement stmt = con.prepareStatement(Query.MEMBER_SELECT);) {
             // parameter 설정
             stmt.setString(1, member.getId());
-            stmt.setString(2, member.getPassword());
+            stmt.setString(2, sha256.encrypt(member.getPassword()));
             rs = stmt.executeQuery();
 
             // 행 개수 세기
@@ -49,6 +52,7 @@ public class Login {
             if (rowCount == 1) {
                 System.out.println();
                 System.out.println("로그인 성공했습니다.");
+                commute.commute(member.getId());
             } else {
                 System.out.println();
                 System.out.println("로그인 실패했습니다.");

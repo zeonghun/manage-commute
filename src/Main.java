@@ -1,3 +1,4 @@
+import java.security.NoSuchAlgorithmException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -6,9 +7,10 @@ public class Main {
      * (non-javadoc)
      * 
      * @author zeonghun
+     * @throws NoSuchAlgorithmException
      * @since 2023.03.28
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NoSuchAlgorithmException {
         Scanner sc = new Scanner(System.in);
         Login login = new Login();
         Join join = new Join();

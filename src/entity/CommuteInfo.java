@@ -1,4 +1,5 @@
 package entity;
+
 import java.sql.Timestamp;
 
 /**
@@ -7,17 +8,17 @@ import java.sql.Timestamp;
  * @author zeonghun
  * @since 2023.03.28
  */
-public class Commute {
-    private String state;
+public class CommuteInfo {
+    private int cno;
     private Timestamp onTime;
     private Timestamp offTime;
 
-    public String getState() {
-        return this.state;
+    public int getCno() {
+        return this.cno;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setCno(int cno) {
+        this.cno = cno;
     }
 
     public Timestamp getOnTime() {
