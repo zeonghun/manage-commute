@@ -18,8 +18,8 @@ public class Login {
      * @author zeonghun
      * @since 2023.03.29
      */
-    public void login() throws NoSuchAlgorithmException {
-        Scanner sc = new Scanner(System.in);
+    public void login(Scanner sc) throws NoSuchAlgorithmException {
+        // Scanner sc = new Scanner(System.in);
         UserRepository userRepo = new UserRepository();
         Member member = new Member();
         Commute commute = new Commute();
@@ -45,7 +45,7 @@ public class Login {
         // 아이디가 존재할 경우
         if (rowCount == 1) {
             System.out.println("[ 로그인 성공 ]");
-            commute.commute(member.getId());
+            commute.commute(member.getId(), sc);
 
         // 아이디가 존재하지 않을 경우
         } else {

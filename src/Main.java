@@ -9,8 +9,9 @@ public class Main {
     /**
      * (non-javadoc)
      * 
-     * @author zeonghun
      * @throws NoSuchAlgorithmException
+     * 
+     * @author zeonghun
      * @since 2023.03.28
      */
     public static void main(String[] args) throws NoSuchAlgorithmException {
@@ -27,11 +28,11 @@ public class Main {
                 switch (index) {
                     // 로그인
                     case 1:
-                        login.login();
+                        login.login(sc);
                         break;
                     // 회원가입
                     case 2:
-                        join.join();
+                        join.join(sc);
                         break;
                     // 종료
                     case 3:

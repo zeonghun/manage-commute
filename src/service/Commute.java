@@ -25,8 +25,8 @@ public class Commute {
      * @author zeonghun
      * @since 2023.03.29
      */
-    public void commute(String id) {
-        Scanner sc = new Scanner(System.in);
+    public void commute(String id, Scanner sc) {
+        // Scanner sc = new Scanner(System.in);
         int option = 0;
 
         while (option != 4) {
@@ -148,7 +148,7 @@ public class Commute {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } 
+        }
         
         // 일반 회원일 경우
         else {

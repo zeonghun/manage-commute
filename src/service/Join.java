@@ -17,8 +17,8 @@ public class Join {
      * @author zeonghun
      * @since 2023.03.30
      */
-    public void join() throws NoSuchAlgorithmException {
-        Scanner sc = new Scanner(System.in);
+    public void join(Scanner sc) throws NoSuchAlgorithmException {
+        // Scanner sc = new Scanner(System.in);
         Member member = new Member();
         UserRepository userRepo = new UserRepository();
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
