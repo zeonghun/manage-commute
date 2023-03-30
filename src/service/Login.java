@@ -1,3 +1,4 @@
+package service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -22,9 +23,9 @@ public class Login {
         Commute commute = new Commute();
 
         System.out.println();
-        System.out.print("아이디: ");
+        System.out.print("아이디 : ");
         member.setId(sc.next());
-        System.out.print("비밀번호: ");
+        System.out.print("비밀번호 : ");
         member.setPassword(sc.next());
         System.out.println();
 
@@ -42,18 +43,19 @@ public class Login {
             stmt.setString(2, SHA256.encrypt(member.getPassword()));
             rs = stmt.executeQuery();
 
-            // 행 개수 세기
+            // 행 개수 카운트
             rs.last();
             int rowCount = rs.getRow();
             //rs.beforeFirst();
 
+            // 아이디가 존재할 경우
             if (rowCount == 1) {
-                System.out.println();
-                System.out.println("로그인 성공했습니다.");
+                System.out.println("[ 로그인 성공 ]");
                 commute.commute(member.getId());
+
+            // 아이디가 존재하지 않을 경우
             } else {
-                System.out.println();
-                System.out.println("로그인 실패했습니다.");
+                System.out.println("[ 로그인 실패 ]");
             }
         } catch (Exception e) {
             e.printStackTrace();

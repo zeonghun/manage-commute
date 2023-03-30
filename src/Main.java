@@ -2,6 +2,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import service.Join;
+import service.Login;
+
 public class Main {
     /**
      * (non-javadoc)
@@ -33,17 +36,17 @@ public class Main {
                     // 종료
                     case 3:
                         System.out.println();
-                        System.out.println("종료합니다.");
+                        System.out.println("[ 시스템 종료 ]");
                         System.out.println();
                         break;
                     default:
                         System.out.println();
-                        System.out.println("1~3중에서 입력하세요.");
+                        System.out.println("[ 입력 범위 : 1 ~ 3 ]");
                 }
                 // 예외처리
             } catch (InputMismatchException ime) {
                 System.out.println();
-                System.err.println("숫자만 입력하세요.");
+                System.err.println("[ 숫자만 입력 가능 ]");
                 sc.nextLine();
                 index = 1;
             }
