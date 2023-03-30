@@ -66,6 +66,6 @@ public class Main {
         System.out.println("2. 회원가입");
         System.out.println("3. 종료");
         System.out.println();
-        System.out.print("항목 선택: ");
+        System.out.print("입력 >> ");
     }
 }

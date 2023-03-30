@@ -1,4 +1,5 @@
 package entity;
+
 import java.sql.Timestamp;
 
 /**
@@ -44,5 +45,4 @@ public class Member {
     public void setJoinDate(Timestamp joinDate) {
         this.joinDate = joinDate;
     }
-
 }

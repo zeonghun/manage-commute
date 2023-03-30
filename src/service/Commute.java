@@ -1,4 +1,7 @@
 package service;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -76,7 +79,7 @@ public class Commute {
         System.out.println("3. 조회");
         System.out.println("4. 로그아웃");
         System.out.println();
-        System.out.print("항목 선택: ");
+        System.out.print("입력 >> ");
     }
 
     /**
@@ -95,7 +98,7 @@ public class Commute {
             System.out.println();
             System.out.printf("[ 출근 등록 완료 : %s ]\n", id);
         } else {
-            System.out.println("[ 출근 등록 실패 ]");
+            System.err.println("[ 출근 등록 실패 ]");
         }
     }
 
@@ -115,7 +118,7 @@ public class Commute {
             System.out.println();
             System.out.printf("[ 퇴근 등록 완료 : %s ]\n", id);
         } else {
-            System.out.println("[ 퇴근 등록 실패 ]");
+            System.err.println("[ 퇴근 등록 실패 ]");
         }
     }
 
@@ -130,6 +133,36 @@ public class Commute {
     public void readCommuteList(String id) {
         this.userRepo = new UserRepository();
         boolean isAdmin =  this.userRepo.isAdmin(id);
-        userRepo.readCommuteList(isAdmin, id);
+        ResultSet rs = userRepo.readCommuteList(isAdmin, id);
+
+        // 관리자일 경우
+        if (isAdmin){
+            System.out.println();
+            System.out.println("========================================== Commute List ==========================================");
+            try {
+                while (rs.next()) {
+                    System.out.println("아이디: " + rs.getString("id") + " / 이름: " + rs.getString("name") + " / 출근: "
+                            + rs.getString("on_time") + " / 퇴근: " + rs.getString("off_time"));
+                }
+                System.out.println("==================================================================================================");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } 
+        
+        // 일반 회원일 경우
+        else {
+            System.out.println();
+            System.out.println("========================================== Commute List ==========================================");
+            try {
+                while (rs.next()) {
+                    System.out.println("아이디: " + rs.getString("id") + " / 이름: " + rs.getString("name") + " / 출근: "
+                            + rs.getString("on_time") + " / 퇴근: " + rs.getString("off_time"));
+                }
+                System.out.println("==================================================================================================");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

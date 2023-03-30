@@ -1,29 +1,26 @@
 package service;
+
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.util.Scanner;
 
 import entity.Member;
-import query.Query;
 import repository.UserRepository;
 
 public class Join {
+
     /**
      * 회원가입
      * 
      * @throws NoSuchAlgorithmException
      * 
      * @author zeonghun
-     * @since 2023.03.29
+     * @since 2023.03.30
      */
     public void join() throws NoSuchAlgorithmException {
         Scanner sc = new Scanner(System.in);
         Member member = new Member();
+        UserRepository userRepo = new UserRepository();
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         System.out.println();
@@ -35,30 +32,13 @@ public class Join {
         member.setName(sc.next());
         member.setJoinDate(currentTimestamp);
 
-        try {
-            Class.forName(UserRepository.DB_DRIVE_PATH);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        
-        try (
-            Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
-            PreparedStatement stmt = con.prepareStatement(Query.MEMBER_INSERT);) {
-            // parameter 설정
-            stmt.setString(1, member.getId());
-            // 패스워드 암호화
-            stmt.setString(2, SHA256.encrypt(member.getPassword()));
-            stmt.setString(3, member.getName());
-            stmt.setTimestamp(4, member.getJoinDate());
-            stmt.executeUpdate();
+        boolean joinResult = userRepo.join(member.getId(), member.getPassword(), member.getName(), member.getJoinDate());
+
+        if (joinResult){
             System.out.println();
             System.out.println("[ 회원가입 완료 ]");
-            // 예외처리
-        } catch (SQLIntegrityConstraintViolationException e) {
-            System.out.println();
+        } else {
             System.err.println("[ 아이디 중복 ]");
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 }

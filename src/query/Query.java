@@ -4,7 +4,7 @@ package query;
  * (non-javadoc)
  * 
  * @author zeonghun
- * @since 2023.03.29
+ * @since 2023.03.30
  */
 public class Query {
 
@@ -18,7 +18,7 @@ public class Query {
     public static final String ON_TIME_INSERT = "INSERT INTO commute(commute_index, member_id, on_time) VALUES(?, ?, ?)";
 
     // 퇴근 등록 쿼리
-    public static final String OFF_TIME_INSERT = "UPDATE commute SET off_time = ? WHERE member_id = ? ORDER BY on_time DESC LIMIT 1";
+    public static final String OFF_TIME_UPDATE = "UPDATE commute SET off_time = ? WHERE member_id = ? ORDER BY on_time DESC LIMIT 1";
 
     // 개인 출퇴근 조회 쿼리
     public static final String COMMUTE_READ = "SELECT member.id, member.name, commute.on_time, commute.off_time FROM member LEFT OUTER JOIN commute ON member.id = commute.member_id WHERE member.id = ?";

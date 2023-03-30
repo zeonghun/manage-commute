@@ -1,26 +1,29 @@
 package service;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+
+import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import entity.Member;
-import query.Query;
 import repository.UserRepository;
 
 public class Login {
+
     /**
      * 로그인
+     * 
+     * @throws NoSuchAlgorithmException
      * 
      * @author zeonghun
      * @since 2023.03.29
      */
-    public void login() {
+    public void login() throws NoSuchAlgorithmException {
         Scanner sc = new Scanner(System.in);
+        UserRepository userRepo = new UserRepository();
         Member member = new Member();
-        ResultSet rs = null;
         Commute commute = new Commute();
+        int rowCount = 0;
 
         System.out.println();
         System.out.print("아이디 : ");
@@ -29,36 +32,24 @@ public class Login {
         member.setPassword(sc.next());
         System.out.println();
 
+        ResultSet loginQueryResult = userRepo.login(member.getId(), member.getPassword());
+        
+        // 행 개수 카운트
         try {
-            Class.forName(UserRepository.DB_DRIVE_PATH);
-        } catch (ClassNotFoundException e) {
+            loginQueryResult.last();
+            rowCount = loginQueryResult.getRow();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        try (
-            Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
-            PreparedStatement stmt = con.prepareStatement(Query.MEMBER_SELECT);) {
-            // parameter 설정
-            stmt.setString(1, member.getId());
-            stmt.setString(2, SHA256.encrypt(member.getPassword()));
-            rs = stmt.executeQuery();
+        // 아이디가 존재할 경우
+        if (rowCount == 1) {
+            System.out.println("[ 로그인 성공 ]");
+            commute.commute(member.getId());
 
-            // 행 개수 카운트
-            rs.last();
-            int rowCount = rs.getRow();
-            //rs.beforeFirst();
-
-            // 아이디가 존재할 경우
-            if (rowCount == 1) {
-                System.out.println("[ 로그인 성공 ]");
-                commute.commute(member.getId());
-
-            // 아이디가 존재하지 않을 경우
-            } else {
-                System.out.println("[ 로그인 실패 ]");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        // 아이디가 존재하지 않을 경우
+        } else {
+            System.out.println("[ 로그인 실패 ]");
         }
     }
 }
