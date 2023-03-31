@@ -18,7 +18,13 @@ public class Query {
     public static final String ON_TIME_INSERT = "INSERT INTO commute(commute_index, member_id, on_time) VALUES(?, ?, ?)";
 
     // 퇴근 등록 쿼리
-    public static final String OFF_TIME_UPDATE = "UPDATE commute SET off_time = ? WHERE member_id = ? ORDER BY on_time DESC LIMIT 1";
+    public static final String OFF_TIME_UPDATE = "UPDATE commute SET off_time = ? WHERE member_id = ? AND off_time IS NULL";
+
+    // 오늘 날짜 출근 조회
+    public static final String TODAY_ON_TIME_SELCET = "SELECT * FROM commute WHERE member_id = ? AND DATE(on_time) = DATE(NOW())";
+
+    // 오늘 날짜 퇴근 조회
+    public static final String TODAY_OFF_TIME_SELCET = "SELECT * FROM commute WHERE member_id = ? AND DATE(off_time) = DATE(NOW())";
 
     // 개인 출퇴근 조회 쿼리
     public static final String COMMUTE_READ = "SELECT member.id, member.name, commute.on_time, commute.off_time FROM member LEFT OUTER JOIN commute ON member.id = commute.member_id WHERE member.id = ?";

@@ -23,12 +23,12 @@ import service.SHA256;
 public class UserRepository {
     
     // DB drive 경로
-    public final static String DB_DRIVE_PATH = "org.mariadb.jdbc.Driver";
+    private final static String DB_DRIVE_PATH = "org.mariadb.jdbc.Driver";
 
     /** DB 접속정보 */
-    public final static String DB_URL = "jdbc:mysql://127.0.0.1:3306/work_manager";
-    public final static String DB_USER_ID = "root";
-    public final static String DB_USER_PASSWORD = "1234";
+    private final static String DB_URL = "jdbc:mysql://127.0.0.1:3306/work_manager";
+    private final static String DB_USER_ID = "root";
+    private final static String DB_USER_PASSWORD = "1234";
 
     Member member = new Member();
     CommuteInfo commute = new CommuteInfo();
@@ -44,12 +44,10 @@ public class UserRepository {
      * 
      * @return 회원가입 결과
      * 
-     * @throws NoSuchAlgorithmException
-     * 
      * @author zeonghun
      * @since 2023.03.30
      */
-    public Boolean join(String id, String password, String name, Timestamp joinDate) throws NoSuchAlgorithmException{
+    public Boolean join(String id, String password, String name, Timestamp joinDate) {
         Boolean result = false;
 
         try {
@@ -74,6 +72,8 @@ public class UserRepository {
             // 예외처리
         } catch (SQLIntegrityConstraintViolationException e) {
             System.err.println();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         } catch (SQLException e) {
             System.err.println();
         }
@@ -89,12 +89,10 @@ public class UserRepository {
      * 
      * @return 쿼리 실행 결과
      * 
-     * @throws NoSuchAlgorithmException
-     * 
      * @author zeonghun
      * @since 2023.03.30
      */
-    public ResultSet login(String id, String password) throws NoSuchAlgorithmException {
+    public ResultSet login(String id, String password) {
         ResultSet result = null;
 
         try {
@@ -108,6 +106,68 @@ public class UserRepository {
             PreparedStatement stmt = con.prepareStatement(Query.MEMBER_SELECT);) {
             stmt.setString(1, id);
             stmt.setString(2, SHA256.encrypt(password));
+            result = stmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 오늘 날짜 출근 조회
+     * 
+     * @param id 로그인한 아이디
+     * 
+     * @return 쿼리 실행 결과
+     * 
+     * @author zeonghun
+     * @since 2023.03.31
+     */
+    public ResultSet todayOnTimeRead(String id){
+        ResultSet result = null;
+        
+        try {
+            Class.forName(UserRepository.DB_DRIVE_PATH);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
+            PreparedStatement stmt = con.prepareStatement(Query.TODAY_ON_TIME_SELCET);
+            stmt.setString(1, id);
+            result = stmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 오늘 날짜 퇴근 조회
+     * 
+     * @param id 로그인한 아이디
+     * 
+     * @return 쿼리 실행 결과
+     * 
+     * @author zeonghun
+     * @since 2023.03.31
+     */
+    public ResultSet todayOffTimeRead(String id){
+        ResultSet result = null;
+        
+        try {
+            Class.forName(UserRepository.DB_DRIVE_PATH);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Connection con = DriverManager.getConnection(UserRepository.DB_URL, UserRepository.DB_USER_ID, UserRepository.DB_USER_PASSWORD);
+            PreparedStatement stmt = con.prepareStatement(Query.TODAY_OFF_TIME_SELCET);
+            stmt.setString(1, id);
             result = stmt.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -142,6 +202,8 @@ public class UserRepository {
             commute.setOnTime(currentTimestamp);
             stmt.setTimestamp(3, commute.getOnTime());
             stmt.executeUpdate();
+            System.out.println();
+            System.out.print("[ 출근 등록 완료 / " + commute.getOnTime());
 
             result = true;
         } catch (SQLException e) {
@@ -177,6 +239,8 @@ public class UserRepository {
             stmt.setTimestamp(1, commute.getOffTime());
             stmt.setString(2, id);
             stmt.executeUpdate();
+            System.out.println();
+            System.out.print("[ 퇴근 등록 완료 / " + commute.getOffTime());
             
             result = true;
         } catch (SQLException e) {

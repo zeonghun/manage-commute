@@ -1,6 +1,5 @@
 package service;
 
-import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Scanner;
 
@@ -12,12 +11,10 @@ public class Join {
     /**
      * 회원가입
      * 
-     * @throws NoSuchAlgorithmException
-     * 
      * @author zeonghun
      * @since 2023.03.30
      */
-    public void join(Scanner sc) throws NoSuchAlgorithmException {
+    public void join(Scanner sc) {
         // Scanner sc = new Scanner(System.in);
         Member member = new Member();
         UserRepository userRepo = new UserRepository();

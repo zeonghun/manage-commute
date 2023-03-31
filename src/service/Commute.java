@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import entity.CommuteInfo;
 import repository.UserRepository;
 
 /**
@@ -92,13 +93,35 @@ public class Commute {
      */
     public void workIn(String id) {
         this.userRepo = new UserRepository();
-        boolean workInResult =  this.userRepo.workIn(id);
+        int rowCount = 0;
 
-        if (workInResult) {
+        // 같은 날짜에 출근이 있는지 조회
+        ResultSet result = this.userRepo.todayOnTimeRead(id);
+
+        // 행 개수 카운트
+        try {
+            result.last();
+            rowCount = result.getRow();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // 같은 날짜가 존재할 경우
+        if (rowCount == 1) {
             System.out.println();
-            System.out.printf("[ 출근 등록 완료 : %s ]\n", id);
+            System.err.println("[ 이미 출근 등록이 되어있습니다 ]");
+
+        // 같은 날짜가 존재하지 않을 경우
         } else {
-            System.err.println("[ 출근 등록 실패 ]");
+
+            // 출근 등록
+            boolean workInResult = this.userRepo.workIn(id);
+
+            if (workInResult) {
+                System.out.printf(" / %s ]\n", id);
+            } else {
+                System.err.println("[ 출근 등록 실패 ]");
+            }
         }
     }
 
@@ -112,13 +135,51 @@ public class Commute {
      */
     public void workOut(String id) {
         this.userRepo = new UserRepository();
-        boolean workOutResult =  this.userRepo.workOut(id);
+        int onTimeCount = 0;
+        int offTimeCount = 0;
 
-        if (workOutResult) {
-            System.out.println();
-            System.out.printf("[ 퇴근 등록 완료 : %s ]\n", id);
+        // 같은 날짜에 출근이 있는지 조회
+        ResultSet onTimeResult = this.userRepo.todayOnTimeRead(id);
+
+        // 행 개수 카운트
+        try {
+            onTimeResult.last();
+            onTimeCount = onTimeResult.getRow();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // 같은 날짜에 출근 등록이 되어있는 경우
+        if (onTimeCount == 1) {
+            ResultSet offTimeResult = this.userRepo.todayOffTimeRead(id);
+
+            // 행 개수 카운트
+            try {
+                offTimeResult.last();
+                offTimeCount = offTimeResult.getRow();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            // 같은 날짜에 퇴근 등록이 되어있는 경우
+            if (offTimeCount == 1) {
+                System.out.println();
+                System.err.println("[ 이미 퇴근 등록이 되어있습니다 ]");
+            } else {
+                // 퇴근 등록
+                boolean workOutResult = this.userRepo.workOut(id);
+
+                if (workOutResult) {
+                    System.out.printf(" / %s ]\n", id);
+                } else {
+                    System.err.println("[ 퇴근 등록 실패 ]");
+                }
+            }
+        
+        // 같은 날짜에 출근 등록이 없는 경우
         } else {
-            System.err.println("[ 퇴근 등록 실패 ]");
+            System.out.println();
+            System.err.println("[ 출근 등록이 되어있지 않습니다 ]");
         }
     }
 

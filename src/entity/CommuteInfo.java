@@ -1,6 +1,8 @@
 package entity;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 /**
  * 출퇴근 정보 저장 클래스
@@ -35,5 +37,9 @@ public class CommuteInfo {
 
     public void setOffTime(Timestamp offTime) {
         this.offTime = offTime;
+    }
+
+    public Date getOnTime(LocalDate now) {
+        return null;
     }
 }

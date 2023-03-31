@@ -1,6 +1,5 @@
 package service;
 
-import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
@@ -13,12 +12,10 @@ public class Login {
     /**
      * 로그인
      * 
-     * @throws NoSuchAlgorithmException
-     * 
      * @author zeonghun
      * @since 2023.03.29
      */
-    public void login(Scanner sc) throws NoSuchAlgorithmException {
+    public void login(Scanner sc) {
         // Scanner sc = new Scanner(System.in);
         UserRepository userRepo = new UserRepository();
         Member member = new Member();
